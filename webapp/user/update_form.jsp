@@ -1,3 +1,6 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <!DOCTYPE html>
 <html lang="kr">
 <head>
@@ -16,7 +19,7 @@
     <div class="col-md-12">
         <div class="navbar-header">
 
-            <a href="../index.html" class="navbar-brand">SLiPP</a>
+            <a href="/" class="navbar-brand">SLiPP</a>
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse1">
                 <i class="glyphicon glyphicon-search"></i>
             </button>
@@ -56,11 +59,16 @@
         </div>
         <div class="collapse navbar-collapse" id="navbar-collapse2">
             <ul class="nav navbar-nav navbar-right">
-                <li class="active"><a href="../index.html">Posts</a></li>
-                <li><a href="../user/login.html" role="button">로그인</a></li>
-                <li><a href="../user/form.html" role="button">회원가입</a></li>
-                <li><a href="#" role="button">로그아웃</a></li>
-                <li><a href="#" role="button">개인정보수정</a></li>
+                <c:choose>
+                	<c:when test="${empty sessionScope.user}">
+                		<li><a href="/user/login" role="button">로그인</a></li>
+                		<li><a href="/user/create" role="button">회원가입</a></li>
+                	</c:when>
+                	<c:otherwise>
+                		<li><a href="/user/logout" role="button">로그아웃</a></li>
+               			 <li><a href="/user/edit?userId=${sessionScope.user.userId}" role="button">개인정보수정</a></li>
+                	</c:otherwise>
+                </c:choose>
             </ul>
         </div>
     </div>
@@ -69,17 +77,25 @@
 <div class="container" id="main">
    <div class="col-md-6 col-md-offset-3">
       <div class="panel panel-default content-main">
-          <div class="alert alert-danger" role="alert">아이디 또는 비밀번호가 틀립니다. 다시 로그인 해주세요.</div>
-          <form name="question" method="post" action="/user/login">
+          <form name="question" method="post" action="/user/edit">
+          	<input type="hidden" name="userId" value="${user.userId}">
               <div class="form-group">
-                  <label for="userId">사용자 아이디</label>
-                  <input class="form-control" id="userId" name="userId" placeholder="User ID">
+                  <label for="userId">사용자 아이디 (수정 불가)</label>
+                  <input class="form-control" value="${user.userId}" placeholder="User ID" readonly>
               </div>
               <div class="form-group">
                   <label for="password">비밀번호</label>
                   <input type="password" class="form-control" id="password" name="password" placeholder="Password">
               </div>
-              <button type="submit" class="btn btn-success clearfix pull-right">로그인</button>
+              <div class="form-group">
+                  <label for="name">이름</label>
+                  <input class="form-control" id="name" name="name" value="${user.name}">
+              </div>
+              <div class="form-group">
+                  <label for="email">이메일</label>
+                  <input type="email" class="form-control" id="email" name="email" value="${user.email}">
+              </div>
+              <button type="submit" class="btn btn-success clearfix pull-right">정보 수정</button>
               <div class="clearfix" />
           </form>
         </div>

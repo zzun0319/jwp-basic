@@ -65,5 +65,11 @@ public class User {
             return false;
         return true;
     }
+    
+    public void changeInfo(String password, String name, String email) {
+    	this.password = password;
+    	this.name = name;
+    	this.email = email;
+    }
 
 }

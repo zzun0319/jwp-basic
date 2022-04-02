@@ -12,6 +12,7 @@ import next.model.User;
 
 public class UserDao {
     public void insert(User user) throws SQLException {
+    	
         Connection con = null;
         PreparedStatement pstmt = null;
         try {
@@ -37,11 +38,55 @@ public class UserDao {
 
     public void update(User user) throws SQLException {
         // TODO 구현 필요함.
+    	
+    	Connection con = null;
+    	PreparedStatement ps = null;
+    	
+    	try {
+    		
+    		con = ConnectionManager.getConnection();
+    		String sql = "UPDATE users SET password=?,name=?,email=? WHERE userId=?";
+    		ps = con.prepareStatement(sql);
+    		ps.setString(1, user.getPassword());
+    		ps.setString(2, user.getName());
+    		ps.setString(3, user.getEmail());
+    		ps.setString(4, user.getUserId());
+    		
+    		ps.executeUpdate();
+    		
+    	} finally {
+			if(con != null) con.close();
+			if(ps != null) ps.close();
+		}
+    	
     }
 
     public List<User> findAll() throws SQLException {
         // TODO 구현 필요함.
-        return new ArrayList<User>();
+    	Connection con = null;
+    	PreparedStatement pstmt = null;
+    	ResultSet rs = null;
+    	List<User> users = new ArrayList<User>();
+    	try {
+    		
+    		con = ConnectionManager.getConnection();
+    		String sql = "SELECT * FROM users";
+    		pstmt = con.prepareStatement(sql);
+    		rs = pstmt.executeQuery();
+    		
+    		while(rs.next()) {
+    			User user = new User(rs.getString("userId"), rs.getString("password"), rs.getString("name"), rs.getString("email"));
+    			users.add(user);
+    		}
+    		
+    		return users;
+    		
+    	} finally {
+			if(con != null) con.close();
+			if(pstmt != null) pstmt.close();
+			if(rs != null) rs.close();
+		} 
+    	
     }
 
     public User findByUserId(String userId) throws SQLException {

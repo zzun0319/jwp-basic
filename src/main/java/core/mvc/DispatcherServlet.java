@@ -32,12 +32,17 @@ public class DispatcherServlet extends HttpServlet {
         logger.debug("Method : {}, Request URI : {}", req.getMethod(), requestUri);
 
         Controller controller = rm.findController(requestUri);
-        try {
-            String viewName = controller.execute(req, resp);
-            move(viewName, req, resp);
-        } catch (Throwable e) {
-            logger.error("Exception : {}", e);
-            throw new ServletException(e.getMessage());
+        if(controller == null) {
+        	move("redirect:/error/404", req, resp);
+        }
+        else {
+        	try {
+                String viewName = controller.execute(req, resp);
+                move(viewName, req, resp);
+            } catch (Throwable e) {
+                logger.error("Exception : {}", e);
+                throw new ServletException(e.getMessage());
+            }
         }
     }
 
